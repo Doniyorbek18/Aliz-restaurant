@@ -515,12 +515,16 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
   import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID"
-  };
+ const firebaseConfig = {
+  apiKey: "AIzaSyBvPPGmWmk5YfhxrsNol5Pwme33ZNqra5A",
+  authDomain: "aliz-boulevard-hotel.firebaseapp.com",
+  databaseURL: "https://aliz-boulevard-hotel-default-rtdb.firebaseio.com",
+  projectId: "aliz-boulevard-hotel",
+  storageBucket: "aliz-boulevard-hotel.firebasestorage.app",
+  messagingSenderId: "498673946884",
+  appId: "1:498673946884:web:2d516ad7019f336c544051",
+  measurementId: "G-1PPGWZRTLV"
+};
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
