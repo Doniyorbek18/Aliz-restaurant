@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitchen Dashboard — Aliz Boulevard Hotel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #9E7C3A;
+    --gold-light: #C4A05A;
+    --gold-dim: #7A5E28;
+    --ink: #1A1612;
+    --ink2: #2C2520;
+    --cream: #F8F5EF;
+    --cream2: #EDE8DF;
+    --stone: #8A8075;
+    --green: #2E7D52;
+    --green-bg: #EAF4EE;
+    --red: #8B2020;
+    --red-bg: #FAEAEA;
+    --blue: #1A4A7A;
+    --blue-bg: #EAF0FA;
+    --amber: #7A5010;
+    --amber-bg: #FDF5E6;
+    --border: rgba(184,173,158,0.25);
+    --border-strong: rgba(184,173,158,0.45);
+    --border-gold: rgba(158,124,58,0.25);
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Jost', system-ui, sans-serif;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: var(--sans);
+    background: #F2EFE8;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--ink);
+    padding: 0 32px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+  }
+  .topbar-logo {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+  }
+  .topbar-logo em { font-style: italic; }
+  .topbar-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(158,124,58,0.35);
+  }
+  .topbar-section {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+  .live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(248,245,239,0.45);
+    text-transform: uppercase;
+  }
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #5CB87A;
+    animation: pulse 2.5s ease infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .time-display {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(248,245,239,0.6);
+  }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr 280px;
+    gap: 0;
+    min-height: 100vh;
+    padding-top: 58px;
+  }
+
+  /* ── LEFT SIDEBAR ── */
+  .sidebar {
+    background: var(--ink2);
+    padding: 24px 0;
+    border-right: 1px solid rgba(158,124,58,0.15);
+  }
+  .sidebar-heading {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: rgba(158,124,58,0.7);
+    text-transform: uppercase;
+    padding: 0 20px 10px;
+    border-bottom: 1px solid rgba(158,124,58,0.1);
+    margin-bottom: 6px;
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 20px;
+    cursor: pointer;
+    font-size: 12px;
+    color: rgba(248,245,239,0.45);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    border-left: 2px solid transparent;
+    transition: color 0.15s, background 0.15s;
+  }
+  .sidebar-item:hover { color: rgba(248,245,239,0.7); background: rgba(158,124,58,0.06); }
+  .sidebar-item.active { color: var(--cream); border-left-color: var(--gold); background: rgba(158,124,58,0.08); }
+  .sidebar-item svg { opacity: 0.6; flex-shrink: 0; }
+  .sidebar-item.active svg { opacity: 1; }
+  .sidebar-badge {
+    margin-left: auto;
+    background: var(--gold);
+    color: var(--ink);
+    font-size: 10px;
+    font-weight: 500;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+  }
+  .sidebar-stats {
+    margin: 24px 0 0;
+    padding: 20px;
+    border-top: 1px solid rgba(158,124,58,0.1);
+  }
+  .stat-card {
+    text-align: center;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(158,124,58,0.12);
+    border-radius: 2px;
+    margin-bottom: 8px;
+  }
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: rgba(158,124,58,0.7);
+    text-transform: uppercase;
+  }
+
+  /* ── MAIN FEED ── */
+  .feed {
+    padding: 24px 28px;
+    overflow-y: auto;
+    max-height: calc(100vh - 58px);
+  }
+  .feed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .feed-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .feed-sub {
+    font-size: 10px;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border: 1px solid var(--border-strong);
+    background: var(--cream);
+    color: var(--stone);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--ink);
+    color: var(--cream);
+    border-color: var(--ink);
+  }
+
+  /* ORDER CARD */
+  .order-card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .order-card.status-new { border-left: 3px solid var(--gold); }
+  .order-card.status-preparing { border-left: 3px solid var(--blue); }
+  .order-card.status-enroute { border-left: 3px solid var(--green); }
+  .order-card.status-delivered { border-left: 3px solid #aaa; opacity: 0.7; }
+  .order-card.status-declined { border-left: 3px solid var(--red); opacity: 0.6; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(248,245,239,0.6);
+  }
+  .card-room {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+  .card-suite-lbl {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .card-order-no {
+    font-size: 10px;
+    color: var(--stone);
+    letter-spacing: 0.06em;
+  }
+  .card-badges { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .badge {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-weight: 400;
+  }
+  .badge-new { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(122,80,16,0.2); }
+  .badge-preparing { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(26,74,122,0.2); }
+  .badge-enroute { background: var(--green-bg); color: var(--green); border: 1px solid rgba(46,125,82,0.2); }
+  .badge-delivered { background: #F0EEE8; color: #888; border: 1px solid rgba(0,0,0,0.1); }
+  .badge-declined { background: var(--red-bg); color: var(--red); border: 1px solid rgba(139,32,32,0.2); }
+  .card-time { font-size: 10px; color: var(--stone); letter-spacing: 0.04em; }
+
+  .card-body { padding: 14px 18px; }
+  .order-item-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--ink2);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.4;
+  }
+  .order-item-row:last-of-type { border-bottom: none; }
+  .order-item-name { font-family: var(--serif); font-size: 15px; font-weight: 300; }
+  .order-item-qty { color: var(--stone); margin-right: 4px; font-size: 12px; }
+  .order-item-price { font-size: 12px; color: var(--gold-dim); }
+  .order-notes {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--cream2);
+    border-left: 2px solid var(--border-gold);
+    font-size: 12px;
+    color: var(--stone);
+    font-style: italic;
+    line-height: 1.5;
+  }
+  .order-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-gold);
+  }
+  .order-total-label { font-size: 9px; letter-spacing: 0.16em; color: var(--stone); text-transform: uppercase; }
+  .order-total-price { font-family: var(--serif); font-size: 20px; font-weight: 300; color: var(--ink); }
+
+  .card-actions { display: flex; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--border); background: rgba(248,245,239,0.4); }
+  .action-btn {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--border-strong);
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .action-btn:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .action-btn.primary { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .action-btn.primary:hover { background: var(--ink2); }
+  .action-btn.success { background: var(--green-bg); color: var(--green); border-color: rgba(46,125,82,0.3); }
+  .action-btn.success:hover { background: var(--green); color: #fff; border-color: var(--green); }
+  .action-btn.danger { background: var(--red-bg); color: var(--red); border-color: rgba(139,32,32,0.2); }
+  .action-btn.danger:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--stone);
+  }
+  .empty-state svg { opacity: 0.3; margin-bottom: 16px; }
+  .empty-label { font-family: var(--serif); font-size: 20px; font-weight: 300; color: var(--stone); font-style: italic; margin-bottom: 6px; }
+  .empty-sub { font-size: 11px; letter-spacing: 0.1em; color: rgba(138,128,117,0.6); }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    background: var(--cream);
+    border-left: 1px solid var(--border);
+    padding: 24px 20px;
+    overflow-y: auto;
+    max-height: calc(100vh - 58px);
+  }
+  .panel-title {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-gold);
+  }
+  .log-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+  }
+  .log-time { color: var(--gold-dim); font-size: 10px; flex-shrink: 0; letter-spacing: 0.06em; white-space: nowrap; margin-top: 1px; }
+  .log-text { color: var(--stone); line-height: 1.5; }
+  .log-text strong { color: var(--ink); font-weight: 500; }
+  .log-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .dot-new { background: var(--gold); }
+  .dot-prep { background: var(--blue); }
+  .dot-route { background: var(--green); }
+  .dot-done { background: #aaa; }
+  .dot-bad { background: var(--red); }
+
+  /* DEMO HELPER NOTICE */
+  .demo-notice {
+    background: rgba(158,124,58,0.08);
+    border: 1px solid var(--border-gold);
+    padding: 12px 16px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    font-size: 11px;
+    color: var(--gold-dim);
+    line-height: 1.6;
+  }
+  .demo-notice strong { color: var(--ink); font-weight: 500; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar, .right-panel { display: none; }
+    .feed { padding: 16px; max-height: none; }
+    .topbar { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo"><em>Aliz</em> Boulevard Hotel</div>
+  <div class="topbar-divider"></div>
+  <div class="topbar-section">Kitchen Operations</div>
+  <div class="topbar-right">
+    <div class="live-indicator"><div class="live-dot"></div> Live</div>
+    <div class="time-display" id="clock">—</div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-heading">Operations</div>
+    <div class="sidebar-item active">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+      In-room orders
+      <span class="sidebar-badge" id="new-count">0</span>
+    </div>
+    <div class="sidebar-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2v6l2 3H4l2-3V2M18 14a4 4 0 0 0-8 0h8z"/></svg>
+      Kitchen status
+    </div>
+    <div class="sidebar-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Staff on duty
+    </div>
+    <div class="sidebar-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Daily reports
+    </div>
+
+    <div class="sidebar-stats">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">Orders today</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-revenue">$0</div>
+        <div class="stat-label">Revenue today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN FEED -->
+  <div class="feed">
+    <div class="feed-header">
+      <div>
+        <div class="feed-title">Order queue</div>
+        <div class="feed-sub">Updates in real time across all devices</div>
+      </div>
+    </div>
+
+    <div class="demo-notice">
+      <strong>Setup:</strong> make sure the Firebase config block near the bottom of this file and of <code>guest.html</code> are filled in with the <em>same</em> project credentials. Once that's done, any guest device that opens <code>guest.html?room=XXX</code> and places an order will appear here instantly — no matter what device or browser it's on.
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+      <button class="filter-btn" onclick="setFilter('new', this)">New</button>
+      <button class="filter-btn" onclick="setFilter('preparing', this)">Preparing</button>
+      <button class="filter-btn" onclick="setFilter('enroute', this)">En route</button>
+      <button class="filter-btn" onclick="setFilter('delivered', this)">Delivered</button>
+    </div>
+
+    <div id="order-feed">
+      <div class="empty-state" id="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        <div class="empty-label">Awaiting orders</div>
+        <div class="empty-sub">New suite orders will appear here</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Activity log -->
+  <div class="right-panel">
+    <div class="panel-title">Activity log</div>
+    <div id="activity-log">
+      <div class="log-item"><div class="log-dot dot-done"></div><div class="log-time" id="start-time">—</div><div class="log-text">Kitchen operations opened</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     FIREBASE — REAL-TIME BRIDGE (cross-device)
+     Use the EXACT SAME config as in guest.html so both apps
+     read/write the same database.
+════════════════════════════════════════════════════════════ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  window.__aliz = { db, ref, update, onValue };
+</script>
+
+<script>
+  /* ──────────────────────────────
+     FIREBASE HELPER
+  ────────────────────────────── */
+  function waitForFirebase(cb) {
+    if (window.__aliz) cb(window.__aliz);
+    else setTimeout(() => waitForFirebase(cb), 30);
+  }
+
+  /* ──────────────────────────────
+     CLOCK
+  ────────────────────────────── */
+  function ts() {
+    const n = new Date();
+    return n.getHours().toString().padStart(2,'0') + ':' + n.getMinutes().toString().padStart(2,'0');
+  }
+  function updateClock() { document.getElementById('clock').textContent = ts(); }
+  updateClock();
+  setInterval(updateClock, 1000);
+  document.getElementById('start-time').textContent = ts();
+
+  /* ──────────────────────────────
+     STATE
+  ────────────────────────────── */
+  const orders = {};      // id → order object
+  let currentFilter = 'all';
+  let totalRevenue = 0;
+  let totalOrders = 0;
+
+  /* ──────────────────────────────
+     FILTER
+  ────────────────────────────── */
+  function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderFeed();
+  }
+
+  /* ──────────────────────────────
+     RENDER
+  ────────────────────────────── */
+  function renderFeed() {
+    const feed = document.getElementById('order-feed');
+    const keys = Object.keys(orders).sort((a, b) => (orders[b].timestamp || 0) - (orders[a].timestamp || 0));
+    const filtered = keys.filter(k => currentFilter === 'all' || orders[k].status === currentFilter);
+
+    const emptyEl = document.getElementById('empty-state');
+
+    // Remove old cards
+    feed.querySelectorAll('.order-card').forEach(el => el.remove());
+
+    if (filtered.length === 0) {
+      emptyEl.style.display = 'block';
+      return;
+    }
+    emptyEl.style.display = 'none';
+
+    filtered.forEach(id => {
+      const o = orders[id];
+      const card = buildCard(o);
+      feed.appendChild(card);
+    });
+  }
+
+  function buildCard(o) {
+    const div = document.createElement('div');
+    div.className = 'order-card status-' + o.status;
+    div.id = 'card-' + o.firebaseKey;
+
+    const itemRows = o.items.map(i =>
+      `<div class="order-item-row">
+        <span class="order-item-name"><span class="order-item-qty">${i.qty}×</span> ${i.name}</span>
+        <span class="order-item-price">$${i.qty * i.price}</span>
+      </div>`
+    ).join('');
+
+    const notesHtml = o.notes ? `<div class="order-notes">${o.notes}</div>` : '';
+    const badgeClass = 'badge-' + o.status;
+    const badgeText = { new:'New', preparing:'Preparing', enroute:'En route', delivered:'Delivered', declined:'Declined' }[o.status] || o.status;
+
+    let actionsHtml = '';
+    if (o.status === 'new') {
+      actionsHtml = `<div class="card-actions">
+        <button class="action-btn primary" onclick="setStatus('${o.firebaseKey}','preparing')">Accept order</button>
+        <button class="action-btn" onclick="setStatus('${o.firebaseKey}','delayed')">Delay +10 min</button>
+        <button class="action-btn danger" onclick="setStatus('${o.firebaseKey}','declined')">Decline</button>
+      </div>`;
+    } else if (o.status === 'preparing') {
+      actionsHtml = `<div class="card-actions">
+        <button class="action-btn success" onclick="setStatus('${o.firebaseKey}','enroute')">Food ready — dispatch</button>
+        <button class="action-btn" onclick="setStatus('${o.firebaseKey}','delayed')">Delay +10 min</button>
+      </div>`;
+    } else if (o.status === 'enroute') {
+      actionsHtml = `<div class="card-actions">
+        <button class="action-btn success" onclick="setStatus('${o.firebaseKey}','delivered')">Confirm delivered</button>
+      </div>`;
+    }
+
+    div.innerHTML = `
+      <div class="card-header">
+        <div>
+          <div class="card-suite-lbl">Suite</div>
+          <div class="card-room">${o.room}</div>
+        </div>
+        <div>
+          <div class="card-order-no">Order ABH-${o.room}-${o.id}</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge ${badgeClass}">${badgeText}</span>
+          <span class="card-time">${o.time}</span>
+        </div>
+      </div>
+      <div class="card-body">
+        ${itemRows}
+        ${notesHtml}
+        <div class="order-total-row">
+          <span class="order-total-label">Total (incl. service 15%)</span>
+          <span class="order-total-price">$${o.total}</span>
+        </div>
+      </div>
+      ${actionsHtml}`;
+
+    return div;
+  }
+
+  /* ──────────────────────────────
+     STATUS UPDATES
+  ────────────────────────────── */
+  function setStatus(key, status) {
+    if (!orders[key]) return;
+    const { db, ref, update } = window.__aliz;
+
+    if (status === 'delayed') {
+      // Don't change status, just notify guest
+      update(ref(db, 'orders/' + key), { delayNotice: { time: ts(), timestamp: Date.now() } });
+      addLog('dot-prep', `Suite ${orders[key].room} — delay notified (+10 min)`);
+      return;
+    }
+
+    const time = ts();
+    orders[key] = { ...orders[key], status, time };
+    update(ref(db, 'orders/' + key), { status, time });
+
+    // Stats
+    if (status === 'delivered') {
+      totalOrders++;
+      totalRevenue += orders[key].total;
+      document.getElementById('stat-total').textContent = totalOrders;
+      document.getElementById('stat-revenue').textContent = '$' + totalRevenue;
+    }
+
+    const statusLabels = {
+      preparing: 'Accepted — preparation started',
+      enroute: 'Ready — runner dispatched',
+      delivered: 'Delivered to suite',
+      declined: 'Order declined'
+    };
+    const dotClass = { preparing:'dot-prep', enroute:'dot-route', delivered:'dot-done', declined:'dot-bad' }[status] || 'dot-prep';
+    addLog(dotClass, `Suite ${orders[key].room} · Order ${orders[key].id} — ${statusLabels[status] || status}`);
+
+    // Update new-order badge
+    const newCount = Object.values(orders).filter(o => o.status === 'new').length;
+    document.getElementById('new-count').textContent = newCount;
+
+    renderFeed();
+  }
+
+  /* ──────────────────────────────
+     ACTIVITY LOG
+  ────────────────────────────── */
+  function addLog(dotClass, text) {
+    const log = document.getElementById('activity-log');
+    const item = document.createElement('div');
+    item.className = 'log-item';
+    item.innerHTML = `<div class="log-dot ${dotClass}"></div><div class="log-time">${ts()}</div><div class="log-text">${text}</div>`;
+    log.insertBefore(item, log.firstChild);
+  }
+
+  /* ──────────────────────────────
+     LISTEN FOR ORDERS (any device, any room)
+  ────────────────────────────── */
+  let firstSnapshotLoaded = false;
+
+  function initOrdersFeed() {
+    waitForFirebase(({ db, ref, onValue }) => {
+      onValue(ref(db, 'orders'), snap => {
+        const all = snap.val() || {};
+        const freshlyArrived = [];
+
+        Object.keys(all).forEach(key => {
+          const o = all[key];
+          o.firebaseKey = key;
+          if (!orders[key] && firstSnapshotLoaded) freshlyArrived.push(o);
+          orders[key] = o;
+        });
+        firstSnapshotLoaded = true;
+
+        freshlyArrived.forEach(o => addLog('dot-new', `<strong>New order</strong> — Suite ${o.room} · $${o.total}`));
+
+        const newCount = Object.values(orders).filter(o => o.status === 'new').length;
+        document.getElementById('new-count').textContent = newCount;
+
+        renderFeed();
+      });
+    });
+  }
+  initOrdersFeed();
+</script>
+</body>
+</html>

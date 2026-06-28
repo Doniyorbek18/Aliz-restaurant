@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>In-Room Dining — Aliz Boulevard Hotel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #9E7C3A;
+    --gold-light: #C4A05A;
+    --gold-dim: #6B5228;
+    --ink: #1A1612;
+    --ink2: #3D3328;
+    --cream: #F8F5EF;
+    --cream2: #EDE8DF;
+    --stone: #8A8075;
+    --border-warm: rgba(184,173,158,0.25);
+    --border-gold: rgba(158,124,58,0.3);
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Jost', system-ui, sans-serif;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: var(--sans);
+    background: var(--ink);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── LAYOUT ── */
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ── SCREEN SYSTEM ── */
+  .screen { display: none; flex-direction: column; flex: 1; }
+  .screen.active { display: flex; }
+
+  /* ════════════════════════════
+     SCREEN 1 — MENU
+  ════════════════════════════ */
+  .hero {
+    background: var(--ink);
+    padding: 48px 24px 24px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .hero-eyebrow {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--gold-light);
+    font-weight: 300;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .hero-title em { font-style: italic; }
+  .hero-sub {
+    font-size: 11px;
+    color: rgba(248,245,239,0.4);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+  }
+  .hero-suite {
+    position: absolute;
+    top: 48px;
+    right: 24px;
+    text-align: right;
+  }
+  .suite-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .suite-num {
+    font-family: var(--serif);
+    font-size: 28px;
+    color: rgba(248,245,239,0.5);
+    font-weight: 300;
+    line-height: 1;
+  }
+  .gold-rule {
+    width: 28px;
+    height: 1px;
+    background: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  /* CATEGORY TABS */
+  .cat-tabs {
+    display: flex;
+    background: var(--ink);
+    border-bottom: 1px solid var(--border-gold);
+    flex-shrink: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .cat-tabs::-webkit-scrollbar { display: none; }
+  .cat-tab {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(184,173,158,0.5);
+    font-weight: 400;
+    padding: 12px 18px 11px;
+    cursor: pointer;
+    border-bottom: 1.5px solid transparent;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .cat-tab.on {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold-light);
+  }
+
+  /* MENU SCROLL AREA */
+  .menu-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 24px 100px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .menu-section-title {
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    color: var(--gold);
+    text-transform: uppercase;
+    padding: 20px 0 10px;
+    border-bottom: 1px solid var(--border-gold);
+    margin-bottom: 4px;
+  }
+
+  /* DISH ITEM */
+  .dish {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-warm);
+  }
+  .dish:last-child { border-bottom: none; }
+  .dish-info { flex: 1; min-width: 0; }
+  .dish-name {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .dish-desc {
+    font-size: 11px;
+    color: var(--stone);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    line-height: 1.55;
+    margin-bottom: 6px;
+  }
+  .dish-price {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--gold-dim);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+  }
+  .dish-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+  .add-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: none;
+    border: 1px solid rgba(138,128,117,0.4);
+    color: var(--stone);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: border-color 0.2s, color 0.2s;
+    font-family: var(--sans);
+    font-weight: 300;
+  }
+  .add-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .qty-ctl { display: flex; align-items: center; gap: 8px; }
+  .qty-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: none;
+    border: 1px solid rgba(138,128,117,0.35);
+    color: var(--stone);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--sans);
+    transition: border-color 0.2s;
+  }
+  .qty-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .qty-n {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--ink);
+    min-width: 16px;
+    text-align: center;
+  }
+
+  /* CART FOOTER */
+  .cart-footer {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    padding: 12px 24px 28px;
+    background: linear-gradient(to top, var(--cream) 80%, transparent);
+    display: none;
+    z-index: 50;
+  }
+  .cart-footer.visible { display: block; }
+  .cart-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 2px;
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 400;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.2s;
+  }
+  .cart-btn:hover { background: var(--ink2); }
+  .cart-btn-price {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* ════════════════════════════
+     SCREEN 2 — CHECKOUT
+  ════════════════════════════ */
+  .co-header {
+    background: var(--ink);
+    padding: 44px 24px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+  .back-btn {
+    background: none;
+    border: none;
+    color: rgba(248,245,239,0.45);
+    font-size: 24px;
+    cursor: pointer;
+    font-weight: 300;
+    line-height: 1;
+    padding: 0;
+    font-family: var(--serif);
+  }
+  .back-btn:hover { color: var(--cream); }
+  .co-head-text {}
+  .co-title {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--cream);
+    font-style: italic;
+  }
+  .co-subtitle {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .co-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 24px 120px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .co-section-label {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    padding: 20px 0 10px;
+    border-bottom: 1px solid var(--border-gold);
+    margin-bottom: 4px;
+  }
+  .co-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border-warm);
+  }
+  .co-item:last-child { border-bottom: none; }
+  .co-item-name {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+  .co-item-qty {
+    font-size: 11px;
+    color: var(--stone);
+    margin-right: 4px;
+  }
+  .co-item-price {
+    font-size: 12px;
+    color: var(--gold-dim);
+    letter-spacing: 0.04em;
+  }
+  .co-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 16px 24px;
+    background: var(--cream2);
+    border-top: 1px solid var(--border-gold);
+    border-bottom: 1px solid var(--border-gold);
+  }
+  .co-total-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--stone);
+    text-transform: uppercase;
+  }
+  .co-total-price {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+  .notes-wrap {
+    padding: 20px 24px 0;
+  }
+  .notes-lbl {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--stone);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .notes-ta {
+    width: 100%;
+    height: 70px;
+    border: 1px solid rgba(184,173,158,0.4);
+    border-radius: 0;
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink);
+    padding: 10px 12px;
+    resize: none;
+    outline: none;
+  }
+  .notes-ta::placeholder { color: rgba(138,128,117,0.5); }
+  .notes-ta:focus { border-color: var(--gold); }
+  .policy-text {
+    padding: 16px 24px;
+    font-size: 11px;
+    color: var(--stone);
+    font-weight: 300;
+    line-height: 1.7;
+    border-top: 1px solid var(--border-warm);
+    margin-top: 16px;
+  }
+
+  /* ════════════════════════════
+     SCREEN 3 — TRACKING
+  ════════════════════════════ */
+  .trk-header {
+    background: var(--ink);
+    padding: 48px 24px 22px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .trk-order-no {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .trk-status {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--cream);
+    font-style: italic;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .trk-sub {
+    font-size: 10px;
+    color: rgba(248,245,239,0.38);
+    letter-spacing: 0.1em;
+    font-weight: 300;
+  }
+  .trk-progress-bar {
+    height: 1px;
+    background: rgba(158,124,58,0.15);
+    flex-shrink: 0;
+  }
+  .trk-progress-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.9s ease;
+  }
+  .eta-strip {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 24px;
+    background: var(--cream2);
+    border-bottom: 1px solid var(--border-warm);
+    flex-shrink: 0;
+  }
+  .eta-icon { font-size: 20px; color: var(--stone); }
+  .eta-label {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--stone);
+    text-transform: uppercase;
+  }
+  .eta-right { margin-left: auto; display: flex; align-items: baseline; gap: 5px; }
+  .eta-num {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .eta-unit {
+    font-size: 10px;
+    color: var(--stone);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .trk-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 24px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .steps { padding: 20px 0; }
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .step-connector {
+    position: absolute;
+    left: 15px;
+    top: 32px;
+    width: 1px;
+    height: calc(100% + 8px);
+    background: rgba(184,173,158,0.25);
+  }
+  .step:last-child .step-connector { display: none; }
+  .step-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(184,173,158,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--cream2);
+    font-size: 13px;
+    color: rgba(138,128,117,0.5);
+    transition: background 0.4s, border-color 0.4s;
+  }
+  .step.done .step-dot {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--gold);
+  }
+  .step.active .step-dot {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(158,124,58,0.06);
+  }
+  .step-body { flex: 1; padding-top: 4px; }
+  .step-title {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .step-time {
+    font-size: 10px;
+    color: var(--stone);
+    letter-spacing: 0.06em;
+    margin-top: 3px;
+  }
+  .receipt {
+    border: 1px solid var(--border-gold);
+    margin: 4px 0 28px;
+    padding: 16px;
+  }
+  .rcpt-heading {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .rcpt-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--stone);
+    padding: 4px 0;
+    line-height: 1.5;
+  }
+  .rcpt-divider {
+    border: none;
+    border-top: 1px solid var(--border-warm);
+    margin: 10px 0;
+  }
+  .rcpt-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .rcpt-total-label {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--stone);
+    text-transform: uppercase;
+  }
+  .rcpt-total-price {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  /* Pulse dot for live indicator */
+  .pulse-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin-right: 6px;
+    animation: pulse 2s ease-in-out infinite;
+    vertical-align: middle;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+
+  /* ════════════════════════════
+     SCREEN 4 — ORDER HISTORY
+  ════════════════════════════ */
+  .history-pill {
+    margin-top: 8px;
+    background: none;
+    border: 1px solid rgba(158,124,58,0.4);
+    color: var(--gold-light);
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 11px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .history-pill:hover { background: rgba(158,124,58,0.15); }
+
+  .hist-card {
+    border: 1px solid var(--border-warm);
+    border-radius: 2px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .hist-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--cream2);
+    border-bottom: 1px solid var(--border-warm);
+  }
+  .hist-order-no { font-size: 10px; color: var(--stone); letter-spacing: 0.06em; }
+  .hist-badge {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 2px;
+    font-weight: 400;
+  }
+  .hist-badge-new, .hist-badge-preparing { background: #EAF0FA; color: #1A4A7A; }
+  .hist-badge-enroute { background: #EAF4EE; color: #2E7D52; }
+  .hist-badge-delivered { background: #F0EEE8; color: #888; }
+  .hist-badge-declined { background: #FAEAEA; color: #8B2020; }
+  .hist-body { padding: 12px 16px 4px; }
+  .hist-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--ink2);
+    padding: 4px 0;
+  }
+  .hist-total {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--ink);
+    padding-top: 8px;
+    margin-top: 6px;
+    border-top: 1px solid var(--border-gold);
+  }
+  .hist-time {
+    font-size: 10px;
+    color: var(--gold-dim);
+    letter-spacing: 0.06em;
+    padding: 0 16px 12px;
+  }
+  .hist-empty {
+    text-align: center;
+    padding: 70px 24px;
+    color: var(--stone);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 10px 20px;
+    border-left: 2px solid var(--gold);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    white-space: nowrap;
+    z-index: 200;
+    max-width: 90vw;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ════ SCREEN 1: MENU ════ -->
+  <div class="screen active" id="s-menu">
+    <div class="hero">
+      <div class="hero-suite">
+        <div class="suite-label">Suite</div>
+        <div class="suite-num" id="room-display">412</div>
+        <button class="history-pill" onclick="goHistory()" aria-label="View order history">Order history</button>
+      </div>
+      <div class="gold-rule"></div>
+      <div class="hero-eyebrow">Aliz Boulevard Hotel</div>
+      <div class="hero-title"><em>In-Room</em> Dining</div>
+      <div class="hero-sub">Available until midnight &nbsp;·&nbsp; discreet delivery</div>
+    </div>
+
+    <div class="cat-tabs">
+      <div class="cat-tab on" onclick="switchCat(this,'starters')">Starters</div>
+      <div class="cat-tab" onclick="switchCat(this,'mains')">Mains</div>
+      <div class="cat-tab" onclick="switchCat(this,'desserts')">Desserts</div>
+      <div class="cat-tab" onclick="switchCat(this,'drinks')">Drinks</div>
+    </div>
+
+    <div class="menu-scroll">
+
+      <div data-cat="starters">
+        <div class="menu-section-title">First courses</div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Chilled lobster bisque</div><div class="dish-desc">Cognac cream, tarragon oil, Oscietra caviar</div><div class="dish-price">$28</div></div><div class="dish-right"><button class="add-btn" onclick="add('lbisque',28,'Chilled lobster bisque')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Burrata &amp; heirloom tomato</div><div class="dish-desc">Aged balsamic, Arbequina olive oil, Maldon sea salt</div><div class="dish-price">$22</div></div><div class="dish-right"><button class="add-btn" onclick="add('burrata',22,'Burrata & heirloom tomato')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Foie gras terrine</div><div class="dish-desc">Toasted brioche, fig mostarda, Sauternes gelée</div><div class="dish-price">$34</div></div><div class="dish-right"><button class="add-btn" onclick="add('foie',34,'Foie gras terrine')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Garden green salad</div><div class="dish-desc">Seasonal shoots, herb vinaigrette, toasted seeds</div><div class="dish-price">$18</div></div><div class="dish-right"><button class="add-btn" onclick="add('salad',18,'Garden green salad')" aria-label="Add">+</button></div></div>
+      </div>
+
+      <div data-cat="mains" style="display:none">
+        <div class="menu-section-title">Main courses</div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Wagyu beef tenderloin</div><div class="dish-desc">Black truffle jus, pomme purée, haricots verts</div><div class="dish-price">$95</div></div><div class="dish-right"><button class="add-btn" onclick="add('wagyu',95,'Wagyu beef tenderloin')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Pan-seared sea bass</div><div class="dish-desc">Saffron bouillabaisse, fennel confit, rouille toast</div><div class="dish-price">$58</div></div><div class="dish-right"><button class="add-btn" onclick="add('seabass',58,'Pan-seared sea bass')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Truffle risotto</div><div class="dish-desc">24-month Parmigiano, Périgord truffle, chive oil</div><div class="dish-price">$48</div></div><div class="dish-right"><button class="add-btn" onclick="add('risotto',48,'Truffle risotto')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Roasted rack of lamb</div><div class="dish-desc">Herb crust, rosemary jus, dauphinoise potatoes</div><div class="dish-price">$72</div></div><div class="dish-right"><button class="add-btn" onclick="add('lamb',72,'Roasted rack of lamb')" aria-label="Add">+</button></div></div>
+      </div>
+
+      <div data-cat="desserts" style="display:none">
+        <div class="menu-section-title">Desserts</div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Valrhona chocolate fondant</div><div class="dish-desc">Salted caramel core, vanilla crème anglaise</div><div class="dish-price">$18</div></div><div class="dish-right"><button class="add-btn" onclick="add('fondant',18,'Chocolate fondant')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Île flottante</div><div class="dish-desc">Soft meringue, praline, caramel lace</div><div class="dish-price">$16</div></div><div class="dish-right"><button class="add-btn" onclick="add('flottante',16,'Île flottante')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Seasonal fruit pavlova</div><div class="dish-desc">Chantilly cream, lemon curd, fresh berries</div><div class="dish-price">$14</div></div><div class="dish-right"><button class="add-btn" onclick="add('pavlova',14,'Fruit pavlova')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Selection of cheeses</div><div class="dish-desc">Three French varieties, quince paste, walnut bread</div><div class="dish-price">$22</div></div><div class="dish-right"><button class="add-btn" onclick="add('cheese',22,'Selection of cheeses')" aria-label="Add">+</button></div></div>
+      </div>
+
+      <div data-cat="drinks" style="display:none">
+        <div class="menu-section-title">Beverages</div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Champagne — Billecart-Salmon</div><div class="dish-desc">Blanc de blancs NV, 150ml, chilled</div><div class="dish-price">$42</div></div><div class="dish-right"><button class="add-btn" onclick="add('champ',42,'Champagne Billecart-Salmon')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Still mineral water</div><div class="dish-desc">Acqua Panna 750ml, chilled</div><div class="dish-price">$9</div></div><div class="dish-right"><button class="add-btn" onclick="add('water',9,'Still mineral water')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Sparkling mineral water</div><div class="dish-desc">San Pellegrino 750ml, chilled</div><div class="dish-price">$9</div></div><div class="dish-right"><button class="add-btn" onclick="add('sparkling',9,'Sparkling mineral water')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Freshly pressed juice</div><div class="dish-desc">Seasonal selection, served over crushed ice</div><div class="dish-price">$12</div></div><div class="dish-right"><button class="add-btn" onclick="add('juice',12,'Freshly pressed juice')" aria-label="Add">+</button></div></div>
+        <div class="dish"><div class="dish-info"><div class="dish-name">Coffee or tea selection</div><div class="dish-desc">Single-origin espresso or loose-leaf tea</div><div class="dish-price">$8</div></div><div class="dish-right"><button class="add-btn" onclick="add('coffee',8,'Coffee or tea')" aria-label="Add">+</button></div></div>
+      </div>
+
+    </div><!-- /menu-scroll -->
+
+    <div class="cart-footer" id="cart-footer">
+      <button class="cart-btn" onclick="goCheckout()" aria-label="View order">
+        <span id="cart-label">View order</span>
+        <span class="cart-btn-price" id="cart-price">$0</span>
+      </button>
+    </div>
+  </div><!-- /s-menu -->
+
+
+  <!-- ════ SCREEN 2: CHECKOUT ════ -->
+  <div class="screen" id="s-checkout">
+    <div class="co-header">
+      <button class="back-btn" onclick="goMenu()" aria-label="Back to menu">‹</button>
+      <div class="co-head-text">
+        <div class="co-title">Your order</div>
+        <div class="co-subtitle">Suite <span id="co-room">412</span> &nbsp;·&nbsp; Aliz Boulevard Hotel</div>
+      </div>
+    </div>
+    <div class="co-body">
+      <div class="co-section-label">Order summary</div>
+      <div id="co-items"></div>
+      <div class="co-total-row">
+        <span class="co-total-label">Subtotal</span>
+        <span class="co-total-price" id="co-subtotal">$0</span>
+      </div>
+      <div class="notes-wrap">
+        <span class="notes-lbl">Special instructions</span>
+        <textarea class="notes-ta" id="notes" placeholder="Dietary requirements, timing preferences, allergies…"></textarea>
+      </div>
+      <p class="policy-text">Your order will be charged to your suite account. A 15% service charge will be applied. Estimated delivery 25 – 35 minutes.</p>
+    </div>
+    <div class="cart-footer visible">
+      <button class="cart-btn" onclick="placeOrder()" aria-label="Confirm order">
+        <span>Confirm order</span>
+        <span class="cart-btn-price" id="co-total-display">$0</span>
+      </button>
+    </div>
+  </div><!-- /s-checkout -->
+
+
+  <!-- ════ SCREEN 3: TRACKING ════ -->
+  <div class="screen" id="s-tracking">
+    <div class="trk-header">
+      <div class="trk-order-no">Order no. ABH-<span id="room-in-order">412</span>-<span id="order-seq">2209</span></div>
+      <div class="trk-status" id="trk-status">Order received</div>
+      <div class="trk-sub" id="trk-sub">We will notify you at each step</div>
+    </div>
+    <div class="trk-progress-bar">
+      <div class="trk-progress-fill" id="trk-fill" style="width:20%"></div>
+    </div>
+    <div class="eta-strip">
+      <svg class="eta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <div>
+        <div class="eta-label">Estimated arrival</div>
+      </div>
+      <div class="eta-right">
+        <div class="eta-num" id="eta-num">30</div>
+        <div class="eta-unit" id="eta-unit">min</div>
+      </div>
+    </div>
+    <div class="trk-scroll">
+      <div class="steps">
+        <div class="step done" id="st-confirmed">
+          <div class="step-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-body">
+            <div class="step-title">Order confirmed</div>
+            <div class="step-time" id="t-confirmed">Just now</div>
+          </div>
+        </div>
+        <div class="step" id="st-preparing">
+          <div class="step-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14" aria-hidden="true"><path d="M6 2v6l2 3H4l2-3V2M18 14a4 4 0 0 0-4-4 4 4 0 0 0-4 4h8z"/><line x1="12" y1="14" x2="12" y2="22"/></svg>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-body">
+            <div class="step-title">Preparation underway</div>
+            <div class="step-time" id="t-preparing">—</div>
+          </div>
+        </div>
+        <div class="step" id="st-enroute">
+          <div class="step-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-body">
+            <div class="step-title">En route to your suite</div>
+            <div class="step-time" id="t-enroute">—</div>
+          </div>
+        </div>
+        <div class="step" id="st-arrived">
+          <div class="step-dot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="step-body">
+            <div class="step-title">Arrived — enjoy your meal</div>
+            <div class="step-time" id="t-arrived">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="receipt">
+        <div class="rcpt-heading">Receipt</div>
+        <div id="rcpt-lines"></div>
+        <hr class="rcpt-divider">
+        <div class="rcpt-total">
+          <span class="rcpt-total-label">Charged to suite (incl. service)</span>
+          <span class="rcpt-total-price" id="rcpt-total">$0</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- /s-tracking -->
+
+  <!-- ════ SCREEN 4: HISTORY ════ -->
+  <div class="screen" id="s-history">
+    <div class="co-header">
+      <button class="back-btn" onclick="goMenu()" aria-label="Back to menu">‹</button>
+      <div class="co-head-text">
+        <div class="co-title">Order history</div>
+        <div class="co-subtitle">Suite <span id="hist-room">412</span> &nbsp;·&nbsp; Aliz Boulevard Hotel</div>
+      </div>
+    </div>
+    <div class="co-body" id="history-list">
+      <div class="hist-empty">No previous orders from this suite yet.</div>
+    </div>
+  </div><!-- /s-history -->
+
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<!-- ════════════════════════════════════════════════════════════
+     FIREBASE — REAL-TIME BRIDGE (cross-device)
+     1. Create a free project at https://console.firebase.google.com
+     2. Build → Realtime Database → Create database (start in test mode,
+        or use the rules shown in README.md)
+     3. Project settings → General → scroll to "Your apps" → Web app → copy the config
+     4. Paste that SAME config here AND in kitchen.html
+════════════════════════════════════════════════════════════ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  window.__aliz = { db, ref, set, update, onValue };
+</script>
+
+<script>
+  /* ──────────────────────────────
+     FIREBASE HELPER
+     The module script above loads after the DOM is parsed, so any
+     code that needs window.__aliz waits for it here instead of
+     assuming it's ready immediately.
+  ────────────────────────────── */
+  function waitForFirebase(cb) {
+    if (window.__aliz) cb(window.__aliz);
+    else setTimeout(() => waitForFirebase(cb), 30);
+  }
+
+  /* ──────────────────────────────
+     STATE
+  ────────────────────────────── */
+  const cart = {};
+  const prices = {};
+  const names = {};
+
+  // Read room from URL param: ?room=412
+  const urlRoom = new URLSearchParams(location.search).get('room') || '412';
+  document.querySelectorAll('#room-display, #co-room, #room-in-order, #hist-room').forEach(el => el.textContent = urlRoom);
+  document.getElementById('order-seq').textContent = Math.floor(1000 + Math.random() * 8999);
+
+  /* ──────────────────────────────
+     HELPERS
+  ────────────────────────────── */
+  function ts() {
+    const n = new Date();
+    return n.getHours().toString().padStart(2,'0') + ':' + n.getMinutes().toString().padStart(2,'0');
+  }
+  function cartTotal() { return Object.keys(cart).reduce((s,k) => s + cart[k] * prices[k], 0); }
+  function cartCount() { return Object.values(cart).reduce((s,v) => s + v, 0); }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  /* ──────────────────────────────
+     MENU TABS
+  ────────────────────────────── */
+  function switchCat(el, cat) {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+    document.querySelectorAll('[data-cat]').forEach(d => {
+      d.style.display = d.dataset.cat === cat ? 'block' : 'none';
+    });
+  }
+
+  /* ──────────────────────────────
+     CART LOGIC
+  ────────────────────────────── */
+  function add(id, price, name) {
+    if (!cart[id]) { cart[id] = 0; prices[id] = price; names[id] = name; }
+    cart[id]++;
+    refreshDishUI(id);
+    updateCartBar();
+    showToast(name + ' added');
+  }
+
+  function rem(id) {
+    if (!cart[id]) return;
+    cart[id]--;
+    if (cart[id] <= 0) delete cart[id];
+    refreshDishUI(id);
+    updateCartBar();
+  }
+
+  function refreshDishUI(id) {
+    // find the dish element that contains a button referencing this id
+    document.querySelectorAll('.dish').forEach(dish => {
+      const anyBtn = dish.querySelector('[onclick*="' + id + '"]');
+      if (!anyBtn) return;
+      const right = dish.querySelector('.dish-right');
+      const qty = cart[id] || 0;
+      if (qty > 0) {
+        right.innerHTML = `<div class="qty-ctl">
+          <button class="qty-btn" onclick="rem('${id}')" aria-label="Decrease">−</button>
+          <span class="qty-n">${qty}</span>
+          <button class="qty-btn" onclick="add('${id}',${prices[id]},\`${names[id]}\`)" aria-label="Increase">+</button>
+        </div>`;
+      } else {
+        right.innerHTML = `<button class="add-btn" onclick="add('${id}',${prices[id]},\`${names[id]}\`)" aria-label="Add">+</button>`;
+      }
+    });
+  }
+
+  function updateCartBar() {
+    const count = cartCount();
+    const total = cartTotal();
+    const footer = document.getElementById('cart-footer');
+    footer.classList.toggle('visible', count > 0);
+    document.getElementById('cart-label').textContent = count + ' item' + (count !== 1 ? 's' : '');
+    document.getElementById('cart-price').textContent = '$' + total;
+  }
+
+  /* ──────────────────────────────
+     SCREEN NAVIGATION
+  ────────────────────────────── */
+  function goMenu() { showScreen('s-menu'); }
+
+  function goCheckout() {
+    const items = document.getElementById('co-items');
+    items.innerHTML = '';
+    Object.keys(cart).forEach(k => {
+      items.innerHTML += `<div class="co-item">
+        <span class="co-item-name"><span class="co-item-qty">${cart[k]}×</span> ${names[k]}</span>
+        <span class="co-item-price">$${cart[k] * prices[k]}</span>
+      </div>`;
+    });
+    const sub = cartTotal();
+    document.getElementById('co-subtotal').textContent = '$' + sub;
+    document.getElementById('co-total-display').textContent = '$' + Math.round(sub * 1.15);
+    showScreen('s-checkout');
+  }
+
+  function placeOrder() {
+    const notes = document.getElementById('notes').value.trim();
+    const sub = cartTotal();
+    const total = Math.round(sub * 1.15);
+    const now = ts();
+
+    // Build receipt
+    const rl = document.getElementById('rcpt-lines');
+    rl.innerHTML = '';
+    Object.keys(cart).forEach(k => {
+      rl.innerHTML += `<div class="rcpt-row"><span>${cart[k]}× ${names[k]}</span><span>$${cart[k] * prices[k]}</span></div>`;
+    });
+    if (notes) {
+      rl.innerHTML += `<div class="rcpt-row" style="font-style:italic;color:var(--stone);margin-top:4px;"><span>${notes}</span></div>`;
+    }
+    document.getElementById('rcpt-total').textContent = '$' + total;
+    document.getElementById('t-confirmed').textContent = now;
+
+    // Emit order to hotel dashboard via Firebase (works across devices)
+    const order = {
+      id: document.getElementById('order-seq').textContent,
+      room: urlRoom,
+      items: Object.keys(cart).map(k => ({ name: names[k], qty: cart[k], price: prices[k] })),
+      notes,
+      total,
+      status: 'new',
+      time: now,
+      timestamp: Date.now()
+    };
+    const orderKey = order.room + '_' + order.id;
+
+    waitForFirebase(({ db, ref, set }) => {
+      set(ref(db, 'orders/' + orderKey), order);
+    });
+
+    showScreen('s-tracking');
+
+    // Listen for status updates from hotel dashboard (any device)
+    trackOrder(orderKey);
+  }
+
+  function trackOrder(orderKey) {
+    waitForFirebase(({ db, ref, onValue }) => {
+      onValue(ref(db, 'orders/' + orderKey), snap => {
+        const o = snap.val();
+        if (!o) return;
+        applyStatus(o.status, o.time);
+      });
+      onValue(ref(db, 'orders/' + orderKey + '/delayNotice'), snap => {
+        const d = snap.val();
+        if (!d) return;
+        applyStatus('delayed', d.time);
+      });
+    });
+  }
+
+  function applyStatus(status, time) {
+    if (status === 'preparing') {
+      document.getElementById('st-preparing').classList.add('active');
+      document.getElementById('t-preparing').textContent = time;
+      document.getElementById('trk-status').textContent = 'Preparation underway';
+      document.getElementById('trk-sub').textContent = 'Our kitchen team is preparing your order';
+      document.getElementById('trk-fill').style.width = '50%';
+      document.getElementById('eta-num').textContent = '20';
+    } else if (status === 'enroute') {
+      markStepDone('st-preparing'); document.getElementById('t-preparing').textContent = document.getElementById('t-preparing').textContent || time;
+      document.getElementById('st-enroute').classList.add('active');
+      document.getElementById('t-enroute').textContent = time;
+      document.getElementById('trk-status').textContent = 'En route to your suite';
+      document.getElementById('trk-sub').textContent = 'Your order is on its way';
+      document.getElementById('trk-fill').style.width = '80%';
+      document.getElementById('eta-num').textContent = '5';
+    } else if (status === 'delivered') {
+      markStepDone('st-preparing'); markStepDone('st-enroute'); markStepDone('st-arrived');
+      document.getElementById('t-arrived').textContent = time;
+      document.getElementById('trk-status').textContent = 'Delivered — enjoy your meal';
+      document.getElementById('trk-sub').textContent = 'Aliz Boulevard Hotel thanks you for dining with us';
+      document.getElementById('trk-fill').style.width = '100%';
+      document.getElementById('eta-num').textContent = '✓';
+      document.getElementById('eta-unit').textContent = 'delivered';
+    } else if (status === 'delayed') {
+      document.getElementById('trk-sub').textContent = 'A brief delay — your patience is appreciated';
+      document.getElementById('eta-num').textContent = parseInt(document.getElementById('eta-num').textContent || 30) + 10;
+    } else if (status === 'declined') {
+      document.getElementById('trk-status').textContent = 'Unable to fulfil this order';
+      document.getElementById('trk-sub').textContent = 'Please contact the concierge — ext. 0';
+      document.getElementById('trk-fill').style.width = '0%';
+    }
+  }
+
+  function markStepDone(id) {
+    const el = document.getElementById(id);
+    el.classList.remove('active');
+    el.classList.add('done');
+    el.querySelector('.step-dot').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>`;
+  }
+
+  /* ──────────────────────────────
+     ORDER HISTORY (this suite)
+  ────────────────────────────── */
+  function goHistory() { showScreen('s-history'); }
+
+  const historyBadgeText = { new: 'Received', preparing: 'Preparing', enroute: 'En route', delivered: 'Delivered', declined: 'Declined' };
+
+  function renderHistory(list) {
+    const wrap = document.getElementById('history-list');
+    if (!list.length) {
+      wrap.innerHTML = '<div class="hist-empty">No previous orders from this suite yet.</div>';
+      return;
+    }
+    wrap.innerHTML = list.map(o => {
+      const itemsHtml = (o.items || []).map(i =>
+        `<div class="hist-item"><span>${i.qty}× ${i.name}</span><span>$${i.qty * i.price}</span></div>`
+      ).join('');
+      return `<div class="hist-card">
+        <div class="hist-head">
+          <span class="hist-order-no">ABH-${o.room}-${o.id}</span>
+          <span class="hist-badge hist-badge-${o.status}">${historyBadgeText[o.status] || o.status}</span>
+        </div>
+        <div class="hist-body">
+          ${itemsHtml}
+          <div class="hist-total"><span>Total</span><span>$${o.total}</span></div>
+        </div>
+        <div class="hist-time">${o.time}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function initHistory() {
+    waitForFirebase(({ db, ref, onValue }) => {
+      onValue(ref(db, 'orders'), snap => {
+        const all = snap.val() || {};
+        const mine = Object.keys(all)
+          .map(k => all[k])
+          .filter(o => o.room === urlRoom)
+          .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        renderHistory(mine);
+      });
+    });
+  }
+  initHistory();
+</script>
+</body>
+</html>
